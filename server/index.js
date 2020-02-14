@@ -1,6 +1,7 @@
 import Koa from 'koa'
 import consola from 'consola'
-const { Nuxt, Builder } = require('nuxt')
+
+const {Nuxt, Builder} = require('nuxt')
 
 import mongoose from 'mongoose'
 import bodyParser from 'koa-bodyparser'
@@ -10,13 +11,15 @@ import json from 'koa-json'
 import dbConfig from './dbs/config'
 import passport from './interface/utils/passport'
 import users from './interface/users'
+import geo from './interface/geo'
+import search from './interface/search'
 
 const app = new Koa()
 // Import and Set Nuxt.js options
 const config = require('../nuxt.config.js')
 config.dev = app.env !== 'production'
 
-async function start () {
+async function start() {
   // Instantiate nuxt.js
   const nuxt = new Nuxt(config)
 
@@ -27,7 +30,7 @@ async function start () {
 
   // 配置session
   app.keys = ['mt', 'keyskeys']
-  app.proxy=true
+  app.proxy = true
   app.use(session({
     key: 'mt',
     prefix: 'mt:uid',
@@ -56,7 +59,8 @@ async function start () {
 
   // 引入路由
   app.use(users.routes()).use(users.allowedMethods())
-
+  app.use(geo.routes()).use(geo.allowedMethods())
+  app.use(search.routes()).use(geo.allowedMethods())
 
   app.use((ctx) => {
     ctx.status = 200
