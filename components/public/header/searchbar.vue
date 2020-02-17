@@ -38,7 +38,7 @@
               v-for="(item, index) in hotPlace"
               :key="index"
             >
-              {{ item.name }}
+              <a :href="'/products?keyword='+encodeURIComponent(item.name)" />{{ item.name }}
             </dd>
           </dl>
           <!-- 输入内容显示 -->
@@ -50,7 +50,7 @@
               v-for="item in searchList"
               :key="item.name"
             >
-              {{ item.name }}
+              <a :href="'/products?keyword='+encodeURIComponent(item.name)" />{{ item.name }}
             </dd>
           </dl>
         </div>
@@ -58,7 +58,7 @@
           <a
             v-for="item in hotPlace"
             :key="item.name"
-            href="#"
+            :href="'/products?keyword='+encodeURIComponent(item.name)"
           >{{ item.name }}</a>
         </p>
         <ul class="nav">
@@ -110,17 +110,20 @@
       >
         <ul class="security">
           <li>
-            <i class="refund" /><p class="txt">
+            <i class="refund" />
+            <p class="txt">
               随时退
             </p>
           </li>
           <li>
-            <i class="single" /><p class="txt">
+            <i class="single" />
+            <p class="txt">
               不满意免单
             </p>
           </li>
           <li>
-            <i class="overdue" /><p class="txt">
+            <i class="overdue" />
+            <p class="txt">
               过期退
             </p>
           </li>
@@ -131,53 +134,53 @@
 </template>
 
 <script>
-    import _ from 'lodash'
-    import { mapState } from 'vuex'
+  import _ from 'lodash'
+  import {mapState} from 'vuex'
 
-    export default {
-      data() {
-        return {
-          isFocus: false,     // 是否是聚焦
-          search: '',         // 输入框的值
-          searchList: [],     // 搜索推荐
-        }
-      },
-      computed: {
-        ...mapState({
-          curPosition: state => state.geo.position.city.replace('市',''),
-          hotPlace: state => state.home.hotPlace.slice(0, 5)
-        }),
-        isHotPlace: function () {
-          return this.isFocus && !this.search
-        },
-        isSearchList: function () {
-          return this.isFocus && this.search
-        }
-      },
-      methods: {
-        focus: function () {
-          this.isFocus = true
-        },
-        blur: function () {
-          let self = this;
-          setTimeout(function () {
-            self.isFocus = false
-          }, 200)
-        },
-        input: _.debounce(async function(){
-          let self = this;
-          let city = self.curPosition
-          self.searchList = []
-          let {status,data:{top}}=await self.$axios.get('/search/top',{
-            params:{
-              input:self.search,
-              city
-            }
-          })
-          self.searchList=top.slice(0,10)
-        },300)
+  export default {
+    data() {
+      return {
+        isFocus: false,     // 是否是聚焦
+        search: '',         // 输入框的值
+        searchList: [],     // 搜索推荐
       }
+    },
+    computed: {
+      ...mapState({
+        curPosition: state => state.geo.position.city.replace('市', ''),
+        hotPlace: state => state.home.hotPlace.slice(0, 5)
+      }),
+      isHotPlace: function () {
+        return this.isFocus && !this.search
+      },
+      isSearchList: function () {
+        return this.isFocus && this.search
+      }
+    },
+    methods: {
+      focus: function () {
+        this.isFocus = true
+      },
+      blur: function () {
+        let self = this;
+        setTimeout(function () {
+          self.isFocus = false
+        }, 200)
+      },
+      input: _.debounce(async function () {
+        let self = this;
+        let city = self.curPosition
+        self.searchList = []
+        let {status, data: {top}} = await self.$axios.get('/search/top', {
+          params: {
+            input: self.search,
+            city
+          }
+        })
+        self.searchList = top.slice(0, 10)
+      }, 300)
     }
+  }
 </script>
 
 <style lang="scss">
