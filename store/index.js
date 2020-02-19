@@ -13,7 +13,9 @@ const store = () => new Vuex.Store({
   actions: {
     async nuxtServerInit({commit}, {req, app}) {
       // 当前位置
-      const {status: status1, data:{province, city}} = await app.$axios.get('geo/getPosition')
+      let {status: status1, data:{province, city}} = await app.$axios.get('geo/getPosition')
+      city = '成都市';
+      province = '四川省';
       commit('geo/setPosition', status1 === 200 ? {city, province} : {city: '', province: ''})
 
       // 菜单
